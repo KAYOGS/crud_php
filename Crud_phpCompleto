@@ -1,0 +1,174 @@
+Tela de cadastro em html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <form action="cadastroProduto.php" method="post">
+        <label for="">Nome</label>
+        <input type="text" name="nome" id="">
+        <label for="">Quantidade</label>
+        <input type="text" name="quantidade" id="">
+        <label for="">Preço</label>
+        <input type="text" name="preco" id="">
+        <input type="submit" value="cadastrar">
+    </form>
+</body>
+</html>
+
+
+Insert crud php
+
+<?php
+include('conexao.php');
+   /* echo '<pre>';
+    print_r($_POST);
+    echo '<pre>';*/
+
+
+    try{
+    if(isset($_POST['nome'],$_POST['quantidade'],$_POST['preco']) && $_POST['nome']!='' && $_POST['preco']!=''){
+        $nome = $_POST['nome'];
+        $valor = $_POST['quantidade'];
+        $quantidade = $_POST['preco'];
+    }else{
+        echo 'Variaveis nao definidas';
+        die();
+    }
+    }catch(PDOExcpetion $e){
+        throw new MyDatabaseException( $Exception->getMessage( ) , (int)$Exception->getCode( ) );
+    }
+
+    echo '<br>';
+
+    $query = $dbh->prepare('insert into cadastro (nome, quantidade, preco) values(:nome, :quantidade, :preco)');
+
+    $query->execute(array(
+        ':nome' => $nome,
+        ':quantidade' => $valor,
+        ':preco' => $quantidade
+    ));
+
+    print_r($dbh);
+?>
+
+conexao com banco em php
+
+<?php
+
+$dsn = 'mysql:dbname=loja;host=127.0.0.1;port=3307';
+$user = 'root';
+$password = '';
+
+$dbh = new PDO($dsn, $user, $password);
+?>
+
+crud read php
+
+<?php
+    include('conexao.php');
+    $query = $dbh->prepare('SELECT * FROM cadastro');
+    $query->execute();
+
+    $produtos = $query->fetchAll();
+?>
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Tabela Produto</title>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+        <link rel="stylesheet" href="cadastro.html">
+    </head>
+    <body>
+        <div class="principal">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nome</th>
+                        <th>Quantidade</th>
+                        <th>Preço</th>
+                    </tr>
+
+                </thead>
+                <tbody>
+                    <?php
+                        foreach($produtos as $produtos){
+                            echo '<tr>';
+                            echo '<td>'.$produtos['id'].'</td>';
+                            echo '<td>'.$produtos['nome'].'</td>';
+                            echo '<td>'.$produtos['quantidade'].'</td>';
+                            echo '<td>'.$produtos['preco'].'</td>';
+                            echo '<td><a href="edit_produto.php?idProduto='.$produtos['id'].'">Edit</a></td>';
+                            echo '</tr>';
+                        }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+    </body>
+</html>
+
+atualizar crud php
+
+<?php
+include('conexao.php');
+
+    try{
+    if(isset($_POST['idProd'], $_POST['nome'],$_POST['quantidade'],$_POST['preco']) && $_POST['nome']!='' && $_POST['preco']!=''){
+        $idProd = $_POST['idProd'];
+        $nome = $_POST['nome'];
+        $valor = $_POST['quantidade'];
+        $quantidade = $_POST['preco'];
+        
+    }else{
+        echo 'Variaveis nao definidas';
+        die();
+    }
+    }catch(PDOExcpetion $e){
+        throw new MyDatabaseException( $Exception->getMessage( ) , (int)$Exception->getCode( ) );
+    }
+
+    echo '<br>';
+
+    $query = $dbh->prepare('UPDATE cadastro set nome=:nome, quantidade=:quantidade, preco=:preco where id=:idProd;');
+
+    $query->execute(array(
+        ':nome' => $nome,
+        ':quantidade' => $quantidade,
+        ':preco' => $valor,
+        ':idProd' => $idProd
+    ));
+?>
+
+tela de atualizar produto crud php
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atualizar produto</title>
+</head>
+
+<body>
+    <form action="atualizar.php" method="post">
+        <input type="hidden" name="idProd" value="<?php echo $_GET['idProd']; ?>">
+        <label for="">Nome</label>
+        <input type="text" name="nome" id="">
+        <label for="">Quantidade</label>
+        <input type="text" name="quantidade" id="">
+        <label for="">Preço</label>
+        <input type="text" name="preco" id="">
+        <input type="submit" value="atualizar">
+    </form>
+</body>
+</html>
