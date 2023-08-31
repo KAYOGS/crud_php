@@ -27,11 +27,6 @@ Insert crud php
 
 <?php
 include('conexao.php');
-   /* echo '<pre>';
-    print_r($_POST);
-    echo '<pre>';*/
-
-
     try{
     if(isset($_POST['nome'],$_POST['quantidade'],$_POST['preco']) && $_POST['nome']!='' && $_POST['preco']!=''){
         $nome = $_POST['nome'];
